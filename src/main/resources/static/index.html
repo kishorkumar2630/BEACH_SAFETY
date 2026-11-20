@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Municipal Beach Safety & Water Quality System</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Public Auth Page (Shown when logged out) -->
+  <div id="auth-page" class="auth-page-wrapper" style="display: none;">
+    <div class="glass-card auth-card">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <div class="brand-logo" style="width: 48px; height: 48px; margin: 0 auto 0.75rem auto; font-size: 1.5rem;">🏖️</div>
+        <h1 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">Municipal Beach Safety</h1>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem;">Water Quality & Public Safety Portal</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <input type="text" id="login-username" class="form-control" placeholder="Enter username" required />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="Enter password" required />
+        </div>
+        <button type="submit" id="login-submit-btn" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+          Sign In
+        </button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" style="display: none;">
+        <div class="form-group">
+          <label for="register-username">Username</label>
+          <input type="text" id="register-username" class="form-control" placeholder="Choose a username" required />
+        </div>
+        <div class="form-group">
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" class="form-control" placeholder="Choose a password" required />
+        </div>
+        <div class="form-hint" style="margin-bottom: 1rem;">Public registration assigns a <strong>VIEWER</strong> account.</div>
+        <button type="submit" id="register-submit-btn" class="btn btn-primary" style="width: 100%; justify-content: center;">
+          Create Viewer Account
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 1.25rem; font-size: 0.85rem; color: var(--text-muted);">
+        <span id="auth-toggle-prompt">Don't have an account?</span>
+        <a href="#" id="auth-toggle-link" style="color: var(--accent-cyan); font-weight: 600; text-decoration: none; margin-left: 0.3rem;">Register here</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application Container (Shown when logged in) -->
+  <div id="app-container" style="display: none;">
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">🏖️</div>
+        <div>
+          <div class="brand-title">Beach Safety</div>
+          <div class="brand-subtitle">Municipal Portal</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-view="dashboard">
+          <span class="icon">📊</span> Dashboard
+        </a>
+        <a class="nav-item" data-view="zones">
+          <span class="icon">🏖️</span> Beach Zones
+        </a>
+        <a class="nav-item" data-view="samples">
+          <span class="icon">🧪</span> Water Samples
+        </a>
+        <a class="nav-item" data-view="contacts-ledger">
+          <span class="icon">📇</span> Contacts & Ledger
+        </a>
+        <a class="nav-item" data-view="reports">
+          <span class="icon">📈</span> Reports
+        </a>
+        <a class="nav-item nav-item-admin" data-view="users" style="display: none;">
+          <span class="icon">👥</span> User Management
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-card">
+          <div class="user-avatar" id="user-avatar-text">U</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Username</div>
+            <span class="user-role-badge" id="user-display-role">ROLE</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+
+      <!-- Header Bar -->
+      <header class="top-header">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation">☰</button>
+          <h1 id="page-title" class="page-title">Dashboard Overview</h1>
+        </div>
+
+        <div class="header-actions">
+          <button id="btn-theme-toggle" class="btn-theme-toggle">
+            <span id="theme-toggle-icon">🌙</span> <span id="theme-toggle-text">Dark Mode</span>
+          </button>
+          <button id="btn-signout" class="btn-signout">Sign Out</button>
+        </div>
+      </header>
+
+      <!-- Dynamic Content Area -->
+      <main class="content-body">
+
+        <!-- DASHBOARD VIEW -->
+        <section id="dashboard-view" class="view-section active">
+          <!-- Zone Filter Bar -->
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label class="filter-label" for="dashboard-zone-filter">Dashboard Filter</label>
+              <select id="dashboard-zone-filter" class="form-select" style="min-width: 220px;">
+                <option value="">Entire System (All Zones)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Summary Metric Cards -->
+          <div id="dashboard-metrics-container" class="metrics-grid">
+            <!-- Rendered by app.js -->
+          </div>
+
+          <!-- Charts and Summaries Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="glass-card">
+              <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">Water Quality Breakdown</h3>
+              <div id="water-quality-chart-container" class="chart-container"></div>
+            </div>
+            <div class="glass-card">
+              <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">Financial Balance Summary</h3>
+              <div id="financial-chart-container" class="chart-container"></div>
+            </div>
+          </div>
+
+          <!-- Latest Callout / Zone Grid -->
+          <div class="glass-card">
+            <div class="section-header-row">
+              <div class="section-title-group">
+                <h2>Zone Status Overview</h2>
+                <p>Current flag safety statuses and active beach conditions</p>
+              </div>
+            </div>
+            <div id="dashboard-zones-container"></div>
+          </div>
+        </section>
+
+        <!-- BEACH ZONES VIEW -->
+        <section id="zones-view" class="view-section">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h2>Beach Zones Management</h2>
+              <p>Register and monitor municipal beach locations</p>
+            </div>
+            <button id="btn-add-zone" class="btn btn-primary role-edit-only" style="display: none;">
+              + Create Beach Zone
+            </button>
+          </div>
+
+          <div id="zones-list-container"></div>
+        </section>
+
+        <!-- WATER SAMPLES VIEW -->
+        <section id="samples-view" class="view-section">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h2>Water Quality Samples</h2>
+              <p>Laboratory bacterial testing records ($E. coli$ and $Enterococci$)</p>
+            </div>
+            <button id="btn-add-sample" class="btn btn-primary role-edit-only" style="display: none;">
+              + Log Water Sample
+            </button>
+          </div>
+
+          <!-- Filters -->
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label class="filter-label" for="sample-zone-filter">Filter by Zone</label>
+              <select id="sample-zone-filter" class="form-select">
+                <option value="">All Zones</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="samples-list-container"></div>
+        </section>
+
+        <!-- CONTACTS & LEDGER VIEW -->
+        <section id="contacts-ledger-view" class="view-section">
+          <div class="tab-row">
+            <button id="tab-btn-contacts" class="tab-btn active">Contacts Directory</button>
+            <button id="tab-btn-ledger" class="tab-btn">Financial Ledger</button>
+          </div>
+
+          <!-- Contacts Sub-View -->
+          <div id="subview-contacts">
+            <div class="section-header-row">
+              <div class="section-title-group">
+                <h2>Contacts Directory</h2>
+                <p>Vendors, customers, and internal departments</p>
+              </div>
+              <button id="btn-add-contact" class="btn btn-primary role-edit-only" style="display: none;">
+                + Add Contact
+              </button>
+            </div>
+            <div id="contacts-list-container"></div>
+          </div>
+
+          <!-- Ledger Sub-View -->
+          <div id="subview-ledger" style="display: none;">
+            <div class="section-header-row">
+              <div class="section-title-group">
+                <h2>Financial Ledger</h2>
+                <p>Permit incomes and laboratory expense tracking</p>
+              </div>
+              <button id="btn-add-ledger" class="btn btn-primary role-edit-only" style="display: none;">
+                + Log Ledger Entry
+              </button>
+            </div>
+
+            <!-- Ledger Summary Banner -->
+            <div id="ledger-summary-banner" class="metrics-grid" style="margin-bottom: 1.5rem;"></div>
+
+            <div id="ledger-list-container"></div>
+          </div>
+        </section>
+
+        <!-- REPORTS VIEW -->
+        <section id="reports-view" class="view-section">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h2>Analytics & Reports</h2>
+              <p>Filter and view water quality statistics and ledger data</p>
+            </div>
+          </div>
+
+          <div class="tab-row">
+            <button id="tab-report-water-quality" class="tab-btn active">Water Quality Statistics</button>
+            <button id="tab-report-samples" class="tab-btn">Samples Log</button>
+            <button id="tab-report-financial" class="tab-btn">Financial Summary</button>
+            <button id="tab-report-ledger" class="tab-btn">Ledger Transactions</button>
+          </div>
+
+          <!-- Shared Filters Form -->
+          <div class="filter-bar" style="align-items: flex-end;">
+            <div class="filter-group">
+              <label class="filter-label" for="report-zone-select">Zone</label>
+              <select id="report-zone-select" class="form-select">
+                <option value="">All Zones</option>
+              </select>
+            </div>
+            <div class="filter-group filter-date-group">
+              <label class="filter-label" for="report-from-date">From Date/Time</label>
+              <input type="datetime-local" id="report-from-date" class="form-control" />
+            </div>
+            <div class="filter-group filter-date-group">
+              <label class="filter-label" for="report-to-date">To Date/Time</label>
+              <input type="datetime-local" id="report-to-date" class="form-control" />
+            </div>
+            <div class="filter-group filter-safe-group" style="display: none;">
+              <label class="filter-label" for="report-safe-select">Safety Status</label>
+              <select id="report-safe-select" class="form-select">
+                <option value="">All</option>
+                <option value="true">Safe Only</option>
+                <option value="false">Unsafe Only</option>
+              </select>
+            </div>
+            <div class="filter-group filter-type-group" style="display: none;">
+              <label class="filter-label" for="report-type-select">Ledger Type</label>
+              <select id="report-type-select" class="form-select">
+                <option value="">All Types</option>
+                <option value="INCOME_PERMIT">Permit Income</option>
+                <option value="EXPENSE_LAB">Lab Expense</option>
+              </select>
+            </div>
+            <div class="filter-group filter-contact-group" style="display: none;">
+              <label class="filter-label" for="report-contact-select">Contact</label>
+              <select id="report-contact-select" class="form-select">
+                <option value="">All Contacts</option>
+              </select>
+            </div>
+            <button id="btn-run-report" class="btn btn-primary">Generate Report</button>
+          </div>
+
+          <div id="reports-output-container"></div>
+        </section>
+
+        <!-- USER MANAGEMENT VIEW (ADMIN ONLY) -->
+        <section id="users-view" class="view-section">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h2>User Account Management</h2>
+              <p>Manage system access, assign roles, and toggle active status</p>
+            </div>
+            <button id="btn-add-user" class="btn btn-primary">
+              + Create User Account
+            </button>
+          </div>
+
+          <div id="users-list-container"></div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Zone Modal (Create / Edit) -->
+  <div id="zone-modal-backdrop" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="zone-modal-title" class="modal-title">Create Beach Zone</h3>
+        <button class="modal-close-btn" data-close-modal="zone-modal-backdrop">&times;</button>
+      </div>
+      <form id="zone-form">
+        <div class="modal-body">
+          <input type="hidden" id="zone-id" />
+          <div class="form-group">
+            <label for="zone-name">Zone Name</label>
+            <input type="text" id="zone-name" class="form-control" placeholder="e.g. North Beach" required />
+          </div>
+          <div class="form-group">
+            <label for="zone-code">Analytic Account Code</label>
+            <input type="text" id="zone-code" class="form-control" placeholder="e.g. NB-001" required />
+          </div>
+          <div class="form-group">
+            <label for="zone-flag">Initial Flag Status</label>
+            <select id="zone-flag" class="form-select">
+              <option value="GREEN">GREEN (Safe)</option>
+              <option value="RED">RED (Unsafe / Closed)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="zone-modal-backdrop">Cancel</button>
+          <button type="submit" id="zone-submit-btn" class="btn btn-primary">Save Zone</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Water Sample Modal (Create / Edit) -->
+  <div id="sample-modal-backdrop" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="sample-modal-title" class="modal-title">Log Water Sample</h3>
+        <button class="modal-close-btn" data-close-modal="sample-modal-backdrop">&times;</button>
+      </div>
+      <form id="sample-form">
+        <div class="modal-body">
+          <input type="hidden" id="sample-id" />
+          <div class="form-group">
+            <label for="sample-zone-id">Beach Zone</label>
+            <select id="sample-zone-id" class="form-select" required></select>
+          </div>
+          <div class="form-group">
+            <label for="sample-ecoli">E. coli Count (CFU/100mL)</label>
+            <input type="number" id="sample-ecoli" class="form-control" min="0" placeholder="e.g. 45" required />
+            <div class="form-hint">Threshold limit > 235</div>
+          </div>
+          <div class="form-group">
+            <label for="sample-enterococci">Enterococci Count (CFU/100mL)</label>
+            <input type="number" id="sample-enterococci" class="form-control" min="0" placeholder="e.g. 30" required />
+            <div class="form-hint">Threshold limit > 104</div>
+          </div>
+          <div class="form-group">
+            <label for="sample-time">Sampled Date & Time</label>
+            <input type="datetime-local" id="sample-time" class="form-control" required />
+          </div>
+          
+          <!-- Live Preview Safety Warning Notice -->
+          <div id="sample-safety-preview" class="glass-card" style="padding: 0.75rem 1rem; border-left: 4px solid var(--safe-green); display: none;">
+            <div style="font-size: 0.85rem; font-weight: 700;" id="sample-preview-status">🟢 Expected Status: SAFE</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);" id="sample-preview-detail">Counts are within safe municipal limits.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="sample-modal-backdrop">Cancel</button>
+          <button type="submit" id="sample-submit-btn" class="btn btn-primary">Save Sample</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Contact Modal (Create / Edit) -->
+  <div id="contact-modal-backdrop" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="contact-modal-title" class="modal-title">Add Contact</h3>
+        <button class="modal-close-btn" data-close-modal="contact-modal-backdrop">&times;</button>
+      </div>
+      <form id="contact-form">
+        <div class="modal-body">
+          <input type="hidden" id="contact-id" />
+          <div class="form-group">
+            <label for="contact-name">Contact Name</label>
+            <input type="text" id="contact-name" class="form-control" placeholder="e.g. Regional Water Lab" required />
+          </div>
+          <div class="form-group">
+            <label for="contact-type">Contact Type</label>
+            <select id="contact-type" class="form-select" required>
+              <option value="VENDOR">VENDOR</option>
+              <option value="CUSTOMER">CUSTOMER</option>
+              <option value="INTERNAL">INTERNAL</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="contact-modal-backdrop">Cancel</button>
+          <button type="submit" id="contact-submit-btn" class="btn btn-primary">Save Contact</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Ledger Modal (Create / Edit) -->
+  <div id="ledger-modal-backdrop" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="ledger-modal-title" class="modal-title">Log Ledger Entry</h3>
+        <button class="modal-close-btn" data-close-modal="ledger-modal-backdrop">&times;</button>
+      </div>
+      <form id="ledger-form">
+        <div class="modal-body">
+          <input type="hidden" id="ledger-id" />
+          <div class="form-group">
+            <label for="ledger-zone-id">Beach Zone</label>
+            <select id="ledger-zone-id" class="form-select" required></select>
+          </div>
+          <div class="form-group">
+            <label for="ledger-contact-id">Contact</label>
+            <select id="ledger-contact-id" class="form-select" required></select>
+          </div>
+          <div class="form-group">
+            <label for="ledger-amount">Amount ($)</label>
+            <input type="number" id="ledger-amount" class="form-control" step="0.01" min="0" placeholder="e.g. 1250.00" required />
+          </div>
+          <div class="form-group">
+            <label for="ledger-type">Transaction Type</label>
+            <select id="ledger-type" class="form-select" required>
+              <option value="INCOME_PERMIT">INCOME_PERMIT (Permit Income)</option>
+              <option value="EXPENSE_LAB">EXPENSE_LAB (Lab Testing Expense)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="ledger-description">Description (Optional)</label>
+            <input type="text" id="ledger-description" class="form-control" placeholder="e.g. Annual permit fee" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="ledger-modal-backdrop">Cancel</button>
+          <button type="submit" id="ledger-submit-btn" class="btn btn-primary">Save Entry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- User Modal (Create / Edit ADMIN) -->
+  <div id="user-modal-backdrop" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="user-modal-title" class="modal-title">Create User Account</h3>
+        <button class="modal-close-btn" data-close-modal="user-modal-backdrop">&times;</button>
+      </div>
+      <form id="user-form">
+        <div class="modal-body">
+          <input type="hidden" id="user-id" />
+          <div class="form-group">
+            <label for="user-username">Username</label>
+            <input type="text" id="user-username" class="form-control" placeholder="e.g. operator1" required />
+          </div>
+          <div class="form-group">
+            <label for="user-password">Password</label>
+            <input type="password" id="user-password" class="form-control" placeholder="Leave blank to keep unchanged on edit" />
+          </div>
+          <div class="form-group">
+            <label for="user-role">Role</label>
+            <select id="user-role" class="form-select" required>
+              <option value="VIEWER">VIEWER (Read Only)</option>
+              <option value="OPERATOR">OPERATOR (Create/Update Operational Data)</option>
+              <option value="ADMIN">ADMIN (Full Control & User Management)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 500; cursor: pointer;">
+              <input type="checkbox" id="user-enabled" checked /> Account Enabled
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="user-modal-backdrop">Cancel</button>
+          <button type="submit" id="user-submit-btn" class="btn btn-primary">Save User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Zone Detail Modal -->
+  <div id="zone-detail-modal-backdrop" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 id="zone-detail-title" class="modal-title">Zone Details & History</h3>
+        <button class="modal-close-btn" data-close-modal="zone-detail-modal-backdrop">&times;</button>
+      </div>
+      <div class="modal-body" id="zone-detail-body">
+        <!-- Rendered by app.js -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="zone-detail-modal-backdrop">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="confirm-modal-backdrop" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 440px;">
+      <div class="modal-header" style="border-bottom: none; padding-bottom: 0;">
+        <h3 id="confirm-modal-title" class="modal-title" style="color: var(--unsafe-red);">Confirm Deletion</h3>
+        <button class="modal-close-btn" data-close-modal="confirm-modal-backdrop">&times;</button>
+      </div>
+      <div class="modal-body" style="padding-top: 0.5rem;">
+        <p id="confirm-modal-message" style="font-size: 0.92rem; color: var(--text-muted);">Are you sure you want to proceed with this action?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="confirm-modal-backdrop">Cancel</button>
+        <button type="button" id="confirm-modal-submit-btn" class="btn btn-danger">Confirm Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- App Script (ES Module) -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
